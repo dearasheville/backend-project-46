@@ -1,43 +1,39 @@
 #!/usr/bin/env node
-/* eslint-disable no-restricted-syntax */
+
+import fs from 'fs';
+import path from 'path';
 
 import { program } from 'commander';
-import fs from 'fs';
+import _ from 'lodash';
 
-const genDiff = (firstData, secondData) => {
-  const firstDataEntries = Object.entries(firstData);
-  const secondDataEntries = Object.entries(secondData);
+const genDiff = (data1, data2) => {
+  const keys1 = Object.keys(data1);
+  const keys2 = Object.keys(data2);
 
-  const firstObject = {};
-  const secondObject = {};
+  const uniqueKeys = _.sortBy(_.uniq([...keys1, ...keys2]));
 
-  for (const [key, value] of secondDataEntries) {
-    if (firstData.hasOwnProperty(key)) {
-      if (firstData[key] === value) {
-        firstObject[`  ${key}`] = value;
-      } else if (firstData[key] !== value) {
-        firstObject[`- ${key}`] = firstData[key];
-        firstObject[`+ ${key}`] = value;
-      }
-    } else {
-      firstObject[`+ ${key}`] = value;
+  const string = uniqueKeys.reduce((acc, key) => {
+    const value1 = data1[key];
+    const value2 = data2[key];
+
+    if (!_.has(data1, key) && _.has(data2, key)) {
+      return `${acc}\n  + ${key}: ${value2}`;
     }
-  }
 
-  for (const [key, value] of firstDataEntries) {
-    if (secondData.hasOwnProperty(key)) {
-      if (secondData[key] === value) {
-        secondObject[`  ${key}`] = value;
-      } else if (secondData[key] !== value) {
-        secondObject[`+ ${key}`] = secondData[key];
-        secondObject[`- ${key}`] = value;
-      }
-    } else {
-      secondObject[`- ${key}`] = value;
+    if (_.has(data1, key) && !_.has(data2, key)) {
+      return `${acc}\n  - ${key}: ${value1}`;
     }
-  }
 
-  return JSON.stringify({ ...firstObject, ...secondObject });
+    if (_.has(data1, key) && _.has(data2, key)) {
+      if (value1 === value2) {
+        return `${acc}\n    ${key}: ${value1}`;
+      }
+    }
+
+    return `${acc}\n  - ${key}: ${value1}\n  + ${key}: ${value2}`;
+  }, '');
+
+  return `{${string}\n}`;
 };
 
 program
@@ -47,8 +43,11 @@ program
   .version('0.1.0')
   .option('-f, --format <type>', 'output format')
   .action((filepath1, filepath2) => {
-    const data1 = JSON.parse(fs.readFileSync(filepath1, 'utf-8'));
-    const data2 = JSON.parse(fs.readFileSync(filepath2, 'utf-8'));
+    const ablsolutePath1 = path.resolve(filepath1);
+    const ablsolutePath2 = path.resolve(filepath2);
+
+    const data1 = JSON.parse(fs.readFileSync(ablsolutePath1, 'utf-8'));
+    const data2 = JSON.parse(fs.readFileSync(ablsolutePath2, 'utf-8'));
 
     console.log(genDiff(data1, data2));
   })
