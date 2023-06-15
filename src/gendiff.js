@@ -3,10 +3,15 @@
 import fs from 'fs';
 import path from 'path';
 
-import { program } from 'commander';
 import _ from 'lodash';
 
-const genDiff = (data1, data2) => {
+const genDiff = (filepath1, filepath2) => {
+  const ablsoluteFilepath1 = path.resolve(filepath1);
+  const ablsoluteFilepath2 = path.resolve(filepath2);
+
+  const data1 = JSON.parse(fs.readFileSync(ablsoluteFilepath1, 'utf-8'));
+  const data2 = JSON.parse(fs.readFileSync(ablsoluteFilepath2, 'utf-8'));
+
   const keys1 = Object.keys(data1);
   const keys2 = Object.keys(data2);
 
@@ -35,22 +40,5 @@ const genDiff = (data1, data2) => {
 
   return `{${string}\n}`;
 };
-
-program
-  .argument('<filepath1>', '')
-  .argument('<filepath2>', '')
-  .description('Compares two configuration files and shows a difference.')
-  .version('0.1.0')
-  .option('-f, --format <type>', 'output format')
-  .action((filepath1, filepath2) => {
-    const ablsolutePath1 = path.resolve(filepath1);
-    const ablsolutePath2 = path.resolve(filepath2);
-
-    const data1 = JSON.parse(fs.readFileSync(ablsolutePath1, 'utf-8'));
-    const data2 = JSON.parse(fs.readFileSync(ablsolutePath2, 'utf-8'));
-
-    console.log(genDiff(data1, data2));
-  })
-  .parse();
 
 export default genDiff;
