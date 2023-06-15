@@ -4,7 +4,7 @@
   "description": "[![Actions Status](https://github.com/dearasheville/backend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/dearasheville/backend-project-46/actions)",
   "main": "src/gendiff.js",
   "scripts": {
-    "test": "npx jest"
+    "test": "node --test"
   },
   "repository": {
     "type": "git",
