@@ -2,7 +2,7 @@
 
 import { program } from 'commander';
 
-import genDiff from '../src/gendiff.js';
+import genDiff from '../src/index.js';
 
 program
   .argument('<filepath1>', '')
