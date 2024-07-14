@@ -3,35 +3,46 @@ import path from 'path';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import parser from '../src/parsers.js';
+import parseFile from '../src/parsers.js';
 
 import { getFileExtension } from '../src/utils.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-test('parser', () => {
-  const filepath1 = path.join(__dirname, '../__fixtures__/file1.json');
-  const filepath2 = path.join(__dirname, '../__fixtures__/file1.yml');
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
-  const [extension1, extension2] = [filepath1, filepath2].map(getFileExtension);
+test('json parser', () => {
+  const filename = 'file1.json';
 
-  const [data1, data2] = [parser(filepath1, extension1), parser(filepath2, extension2)];
+  const filepath = getFixturePath(filename);
 
-  const result1 = {
+  const extension = getFileExtension(filepath);
+
+  const testData = parseFile(filepath, extension);
+  const expectedData = {
     host: 'hexlet.io',
     timeout: 50,
     proxy: '123.234.53.22',
     follow: false,
   };
 
-  const result2 = {
+  expect(testData).toEqual(expectedData);
+});
+
+test('yml parser', () => {
+  const filename = 'file2.yml';
+
+  const filepath = getFixturePath(filename);
+
+  const extension = getFileExtension(filepath);
+
+  const testData = parseFile(filepath, extension);
+  const expectedData = {
+    timeout: 20,
+    verbose: true,
     host: 'hexlet.io',
-    timeout: 50,
-    proxy: '123.234.53.22',
-    follow: false,
   };
 
-  expect(data1).toEqual(result1);
-  expect(data2).toEqual(result2);
+  expect(testData).toEqual(expectedData);
 });

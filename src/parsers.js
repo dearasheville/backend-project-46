@@ -2,11 +2,13 @@ import fs from 'fs';
 
 import yaml from 'js-yaml';
 
-const toReadAndParse = {
-  json: (path) => JSON.parse(fs.readFileSync(path, 'utf-8')),
-  yaml: (path) => yaml.load(fs.readFileSync(path, 'utf-8')),
+const readFile = (filepath) => fs.readFileSync(filepath, 'utf-8');
+
+const parsers = {
+  json: (filepath) => JSON.parse(readFile(filepath)),
+  yaml: (filepath) => yaml.load(readFile(filepath)),
 };
 
-const parser = (path, extension) => toReadAndParse[extension](path);
+const parseFile = (filepath, extension) => parsers[extension](filepath);
 
-export default parser;
+export default parseFile;

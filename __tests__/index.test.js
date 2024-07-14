@@ -8,24 +8,33 @@ import gendiff from '../src/index.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-test('json and yml gendiff', () => {
-  const filepath1 = path.join(__dirname, '../__fixtures__/file1.json');
-  const filepath2 = path.join(__dirname, '../__fixtures__/file2.yml');
-  const filepath3 = path.join(__dirname, '../__fixtures__/result.txt');
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const readFile = (filename) => fs.readFileSync(getFixturePath(filename), 'utf-8');
 
-  const difference = gendiff(filepath1, filepath2);
-  const result = fs.readFileSync(filepath3, 'utf-8');
+test('comparison of flat json files', () => {
+  const filename1 = 'file1.json';
+  const filename2 = 'file2.json';
+  const filename3 = 'expected.txt';
 
-  expect(difference).toEqual(result);
+  const filepath1 = getFixturePath(filename1);
+  const filepath2 = getFixturePath(filename2);
+
+  const testData = gendiff(filepath1, filepath2);
+  const expectedData = readFile(filename3);
+
+  expect(testData).toEqual(expectedData);
 });
 
-test('yml and json gendiff', () => {
-  const filepath1 = path.join(__dirname, '../__fixtures__/file1.yml');
-  const filepath2 = path.join(__dirname, '../__fixtures__/file2.json');
-  const filepath3 = path.join(__dirname, '../__fixtures__/result.txt');
+test('comparison of flat yaml files', () => {
+  const filename1 = 'file1.yml';
+  const filename2 = 'file2.yml';
+  const filename3 = 'expected.txt';
 
-  const difference = gendiff(filepath1, filepath2);
-  const result = fs.readFileSync(filepath3, 'utf-8');
+  const filepath1 = getFixturePath(filename1);
+  const filepath2 = getFixturePath(filename2);
 
-  expect(difference).toEqual(result);
+  const testData = gendiff(filepath1, filepath2);
+  const expectedData = readFile(filename3);
+
+  expect(testData).toEqual(expectedData);
 });
