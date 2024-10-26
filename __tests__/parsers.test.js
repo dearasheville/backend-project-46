@@ -19,30 +19,76 @@ test('json parser', () => {
 
   const extension = getFileExtension(filepath);
 
-  const testData = parseFile(filepath, extension);
+  const receivedData = parseFile(filepath, extension);
   const expectedData = {
-    host: 'hexlet.io',
-    timeout: 50,
-    proxy: '123.234.53.22',
-    follow: false,
+    common: {
+      setting1: 'Value 1',
+      setting2: 200,
+      setting3: true,
+      setting6: {
+        key: 'value',
+        doge: {
+          wow: '',
+        },
+      },
+    },
+    group1: {
+      baz: 'bas',
+      foo: 'bar',
+      nest: {
+        key: 'value',
+      },
+    },
+    group2: {
+      abc: 12345,
+      deep: {
+        id: 45,
+      },
+    },
   };
 
-  expect(testData).toEqual(expectedData);
+  expect(receivedData).toEqual(expectedData);
 });
 
 test('yml parser', () => {
-  const filename = 'file2.yml';
+  const filename = 'file2.yaml';
 
   const filepath = getFixturePath(filename);
 
   const extension = getFileExtension(filepath);
 
-  const testData = parseFile(filepath, extension);
+  const receivedData = parseFile(filepath, extension);
   const expectedData = {
-    timeout: 20,
-    verbose: true,
-    host: 'hexlet.io',
+    common: {
+      follow: false,
+      setting1: 'Value 1',
+      setting3: null,
+      setting4: 'blah blah',
+      setting5: {
+        key5: 'value5',
+      },
+      setting6: {
+        key: 'value',
+        ops: 'vops',
+        doge: {
+          wow: 'so much',
+        },
+      },
+    },
+    group1: {
+      foo: 'bar',
+      baz: 'bars',
+      nest: 'str',
+    },
+    group3: {
+      deep: {
+        id: {
+          number: 45,
+        },
+      },
+      fee: 100500,
+    },
   };
 
-  expect(testData).toEqual(expectedData);
+  expect(receivedData).toEqual(expectedData);
 });
