@@ -2,8 +2,8 @@ import path from 'path';
 
 const extensions = {
   '.json': 'json',
-  '.yml': 'yaml',
   '.yaml': 'yaml',
+  '.yml': 'yaml',
 };
 
 const getAblsolutePath = (filepath) => path.resolve(filepath);
